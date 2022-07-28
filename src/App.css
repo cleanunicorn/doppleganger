@@ -57,6 +57,10 @@
   transform: rotateY(180deg);
 }
 
+.flip-card-inner.matched {
+  border: 3px solid green;
+}
+
 .flip-card-front,
 .flip-card-back {
   position: absolute;
@@ -68,4 +72,8 @@
 
 .flip-card-back {
   transform: rotateY(180deg);
+}
+
+.game {
+  padding: 20px;
 }

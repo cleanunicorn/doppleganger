@@ -2,62 +2,81 @@ import Card from "./Card";
 import React, { useEffect } from "react";
 
 export default function Game(props) {
-  const [gameState, setGameState] = React.useState({ count: 0, flippedCards: 0 });
+  const [gameState, setGameState] = React.useState({
+    count: 0,
+    flippedCards: 0,
+  });
   const [cards, setCards] = React.useState([]);
 
   const handleCardClick = (index) => {
+    // Load current state
+    let newCards = [...cards];
+    let newGameState = { ...gameState };
+
     // Flip card
-    setCards(
-      cards.map((card, i) => {
-        if (i === index) {
-          return { ...card, flipped: true };
-        } else {
-          return { ...card };
-        }
-      })
-    );
+    newCards[index].flipped = true;
+    newCards[index].disabled = true;
 
     // Increment flipped cards
-    setGameState({
-      ...gameState,
-      flippedCards: gameState.flippedCards + 1,
-    });
+    newGameState = {
+      ...newGameState,
+      flippedCards: newGameState.flippedCards + 1,
+    };
 
-    // Check chain validity
-    if (gameState.flippedCards <= props.game.chainLength) {
-      let validFlippedCards = 0;
-      const flippedCardValue = cards[index].value;
-      cards
+    // Count matching cards
+    let validFlippedCards = 0;
+    const flippedCardValue = newCards[index].value;
+    newCards
       .filter((card) => card.flipped)
       .filter((card) => card.value === flippedCardValue)
-      .forEach(() => { validFlippedCards++ });
-      
-      // Chain length reached, check if the cards match 
-      if (validFlippedCards === props.game.chainLength) {
-        console.log('Flipped cards match');
-        // Reset the flipped cards
-        setGameState({ ...gameState, flippedCards: 0 });
+      .forEach(() => {
+        validFlippedCards++;
+      });
 
-        // Disable the flipped cards
-        setCards(cards.map((card) => ({ ...card, disabled: true })));
-      }
-      
-      // If the cards don't match, flip them back
-      if (validFlippedCards < gameState.flippedCards) {
-        console.log(validFlippedCards);
-        console.log(gameState.flippedCards);
-        console.log('Flipped cards do not match');
-        setCards(cards.map((card) => ({ ...card, disabled: true })));
+    // If the cards don't match, flip them back
+    console.log(newGameState);
+    console.log("Matching cards: " + validFlippedCards);
+    if (validFlippedCards < newGameState.flippedCards) {
+      console.log(newGameState.flippedCards);
+      console.log("Flipped cards do not match");
+      newCards = newCards.map((card) => ({ ...card, disabled: true }));
 
-        setTimeout(
-          () => { 
-            // Flip the cards back
-            setCards(cards.map((card) => ({ ...card, flipped: false })));
-          },
-          3000
+      setTimeout(() => {
+        // Flip the cards back
+        setCards(
+          newCards.map((card) => {
+            if (!card.matched) {
+              card.flipped = false;
+              card.disabled = false;
+            }
+            return card;
+          })
         );
-      }
+
+        // Reset flipped cards
+        setGameState({
+          ...newGameState,
+          flippedCards: 0,
+        });
+      }, 3000);
     }
+
+    // Full match chain reached
+    if (validFlippedCards === props.game.chainLength) {
+      console.log("Chain reached");
+
+      newGameState = { ...newGameState, flippedCards: 0 };
+      newCards = newCards.map((card) => {
+        if (card.flipped) {
+          card.disabled = true;
+          card.matched = true;
+        }
+        return card;
+      });
+    }
+
+    setCards(newCards);
+    setGameState(newGameState);
   };
 
   const newGame = () => {
@@ -116,7 +135,7 @@ export default function Game(props) {
           key: i,
           flipped: false,
           matched: false,
-          selected: false,
+          disabled: false,
           value: cardValues[i],
         });
       }

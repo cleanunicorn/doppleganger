@@ -1,10 +1,16 @@
 export default function Card(props) {
-  const flipCardInnerClass =
-    (props.card.flipped ? "flip" : "") + " flip-card-inner";
+  let flipCardInnerClass;
+  flipCardInnerClass = "flip-card-inner";
+  if (props.card.flipped) {
+    flipCardInnerClass += " flip";
+  }
+  if (props.card.matched) {
+    flipCardInnerClass += " matched";
+  }
 
   const handleClick = () => {
-    if (props.card.disabled || props.card.flipped) { 
-      console.log('Card is disabled');
+    if (props.card.disabled || props.card.flipped) {
+      console.log("Card is disabled");
     } else {
       props.onClick(props.index);
     }
