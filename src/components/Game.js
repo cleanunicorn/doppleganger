@@ -5,13 +5,21 @@ export default function Game(props) {
   const [gameState, setGameState] = React.useState({
     count: 0,
     flippedCards: 0,
+    moves: 0,
+    totalMoves: 0,
+    finalizedGames: 0,
+    averageMoves: 0,
   });
   const [cards, setCards] = React.useState([]);
 
   const handleCardClick = (index) => {
     // Load current state
     let newCards = [...cards];
-    let newGameState = { ...gameState };
+    let newGameState = {
+      ...gameState,
+      moves: gameState.moves + 1,
+      totalMoves: gameState.totalMoves + 1,
+    };
 
     // Flip card
     newCards[index].flipped = true;
@@ -58,7 +66,7 @@ export default function Game(props) {
           ...newGameState,
           flippedCards: 0,
         });
-      }, 3000);
+      }, 1000);
     }
 
     // Full match chain reached
@@ -73,6 +81,21 @@ export default function Game(props) {
         }
         return card;
       });
+
+      // Check if game is over
+      let gameOver = true;
+      newCards.forEach((card) => {
+        if (!card.matched) {
+          gameOver = false;
+        }
+      });
+      if (gameOver) {
+        newGameState = {
+          ...newGameState,
+          finalizedGames: newGameState.finalizedGames + 1,
+          averageMoves: (newGameState.totalMoves / (newGameState.finalizedGames + 1)).toFixed(2),
+        };
+      }
     }
 
     setCards(newCards);
@@ -80,7 +103,12 @@ export default function Game(props) {
   };
 
   const newGame = () => {
-    setGameState({ ...gameState, count: gameState.count + 1, flippedCards: 0 });
+    setGameState({
+      ...gameState,
+      count: gameState.count + 1,
+      flippedCards: 0,
+      moves: 0,
+    });
   };
 
   // Shuffle function copied from StackOverflow
@@ -146,6 +174,12 @@ export default function Game(props) {
   return (
     <div className="game">
       <button onClick={newGame}>New game</button>
+      <br />
+      <div className="moves">Moves: {gameState.moves}</div>
+      <div className="total-moves">Total moves: {gameState.totalMoves}</div>
+      <div className="average-moves">
+        Average moves: {gameState.averageMoves}
+      </div>
       <div className="board">
         {cards.map((card, index) => {
           return (

@@ -42,6 +42,7 @@
   height: 50px;
   border: 1px solid red;
   perspective: 1000px;
+  float: left;
 }
 
 .flip-card-inner {
@@ -58,7 +59,7 @@
 }
 
 .flip-card-inner.matched {
-  border: 3px solid green;
+  border: 2px solid green;
 }
 
 .flip-card-front,

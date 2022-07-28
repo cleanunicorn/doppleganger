@@ -4,7 +4,7 @@ import Game from "./components/Game";
 function App() {
   return (
     <div className="App">
-      <Game game={{ squareCount: 8, chainLength: 2 }} />
+      <Game game={{ squareCount: 4, chainLength: 2 }} />
     </div>
   );
 }
