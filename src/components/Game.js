@@ -175,11 +175,13 @@ export default function Game(props) {
     <div className="game">
       <button onClick={newGame}>New game</button>
       <br />
+      <br />
       <div className="moves">Moves: {gameState.moves}</div>
       <div className="total-moves">Total moves: {gameState.totalMoves}</div>
       <div className="average-moves">
         Average moves: {gameState.averageMoves}
       </div>
+      <br />
       <div className="board">
         {cards.map((card, index) => {
           return (
